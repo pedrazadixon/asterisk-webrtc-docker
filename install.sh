@@ -59,7 +59,7 @@ yum -y install wget ca-certificates nano net-tools yum-utils
 # si obtienes este error se debe deshabilitar selinux usando la siguiente linea: 
 setenforce 0 && sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
 
-# instalacion de asterisk para octopus
+# instalacion de asterisk 
 cd /usr/local/src
 wget http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-15.5.0.tar.gz
 tar -zxvf asterisk-*
@@ -79,7 +79,6 @@ make install
 make config
 
 # configuracion de certificado
-cd contrib/scripts
 mkdir -p /etc/asterisk/keys
 cd $DIR_SCRITP
 expect ./instalarCertificado.exp "$HOST_MACHINE" "$COMPANY" "123456" "/etc/asterisk/keys"
@@ -115,7 +114,6 @@ yum -y install mysql-community-server
 systemctl start mysqld
 systemctl enable mysqld
 
-yum -y install lame
 
 mysql -uroot -e "use mysql; 
                   UPDATE user SET password=PASSWORD('$KEYPASS') WHERE user='$ROOTUSER'; 
@@ -144,7 +142,7 @@ mysql -uroot -p"$KEYPASS" -e "CREATE TABLE asterisk.ast_cdr (
                                 userfield varchar(255) NOT NULL default '' 
                               );"
 
-
+# Actualización de variables Asterisk
 cd /etc/asterisk/
 sed -i "s/^externip=public_ip/externip=$IP_MACHINE/g" sip.conf
 sed -i "s/^localnet=local_ip/localnet=$IP_MACHINE/g" sip.conf
@@ -152,18 +150,17 @@ sed -i "s/asterisk_db_password/$KEYPASS/g" res_mysql.conf
 sed -i "s/asterisk_db_password/$KEYPASS/g" cdr_mysql.conf
 
 
-# muevo softphone
+# Instalacion de softphone WEBRTC
 cd $DIR_SCRITP
 cp -r var/www/html/* /var/www/html/
 
 # reinicio de servicios
 systemctl stop httpd
-systemctl start httpd
-
 systemctl stop mysql
-systemctl start mysql
-
 systemctl stop asterisk
+
+systemctl start httpd
+systemctl start mysql
 systemctl start asterisk
 
 printf "\n"
