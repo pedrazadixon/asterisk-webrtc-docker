@@ -1,0 +1,16 @@
+#!/usr/bin/expect -f
+set timeout -1
+set IP [lindex $argv 0]
+set ORG_NAME [lindex $argv 1]
+set PASS [lindex $argv 2]
+set EXECUTABLE [lindex $argv 3]
+spawn /usr/local/src/asterisk-15.5.0/contrib/scripts/ast_tls_cert -C "$IP" -O "$ORG_NAME" -d /etc/asterisk/keys
+expect "Enter pass phrase for"
+send -- "$PASS\r"
+expect "Verifying - Enter pass phrase for"
+send -- "$PASS\r"
+expect "Enter pass phrase for"
+send -- "$PASS\r"
+expect "Enter pass phrase for"
+send -- "$PASS\r"
+expect eof

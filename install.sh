@@ -40,9 +40,9 @@ then
 fi
 
 printf "\n"
-printf "ingrese contasena para el usuario root en la base de datos.\n"
+printf "ingrese contasena para el usuario root y asterisk en la base de datos.\n"
 printf "Minimo 6 caracteres\n"
-printf "[mysql root pass]: "
+printf "[mysql root y asterisk pass]: "
 read KEYPASS
 if [ -z "$KEYPASS" ]
 then
@@ -50,20 +50,15 @@ then
     exit 1
 fi
 
-printf "\n"
-printf "ingrese contasena para el usuario de asterisk en la base de datos.\n"
-printf "Minimo 6 caracteres\n"
-printf "[mysql asterisk pass]: "
-read KEYPASS_ASTERISK
-if [ -z "$KEYPASS_ASTERISK" ]
-then
-    echo "No valido"
-    exit 1
-fi
 
 # instalacion dependencias primarias
 yum -y install wget ca-certificates nano net-tools yum-utils
  
+
+# error: Unable to connect to remote asterisk (does /var/run/asterisk/asterisk.ctl exist?)
+# si obtienes este error se debe deshabilitar selinux usando la siguiente linea: 
+setenforce 0 && sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
+
 # instalacion de asterisk para octopus
 cd /usr/local/src
 wget http://downloads.asterisk.org/pub/telephony/asterisk/releases/asterisk-15.5.0.tar.gz
@@ -86,15 +81,13 @@ make config
 # configuracion de certificado
 cd contrib/scripts
 mkdir -p /etc/asterisk/keys
-./ast_tls_cert -C "$HOST_MACHINE" -O "$COMPANY" -d /etc/asterisk/keys
+cd $DIR_SCRITP
+expect ./instalarCertificado.exp "$HOST_MACHINE" "$COMPANY" "123456" "/etc/asterisk/keys"
 
 # configuraciones estandar asterisk
 cd $DIR_SCRITP
 cp etc/asterisk/* /etc/asterisk/
 
-# error: Unable to connect to remote asterisk (does /var/run/asterisk/asterisk.ctl exist?)
-# si obtienes este error se debe deshabilitar selinux usando la siguiente linea: 
-setenforce 0 && sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
  
 # desactivar firewalld (si es necesario)
 systemctl stop firewalld
@@ -129,7 +122,7 @@ mysql -uroot -e "use mysql;
                   FLUSH PRIVILEGES;"
 
 mysql -uroot -p"$KEYPASS" -e "CREATE DATABASE asterisk;
-                              GRANT ALL PRIVILEGES ON asterisk.* TO 'asterisk'@'localhost' IDENTIFIED BY '$KEYPASS_ASTERISK'; 
+                              GRANT ALL PRIVILEGES ON asterisk.* TO 'asterisk'@'localhost' IDENTIFIED BY '$KEYPASS'; 
                               FLUSH PRIVILEGES;"
 
 mysql -uroot -p"$KEYPASS" -e "CREATE TABLE asterisk.ast_cdr (
@@ -155,8 +148,8 @@ mysql -uroot -p"$KEYPASS" -e "CREATE TABLE asterisk.ast_cdr (
 cd /etc/asterisk/
 sed -i "s/^externip=public_ip/externip=$IP_MACHINE/g" sip.conf
 sed -i "s/^localnet=local_ip/localnet=$IP_MACHINE/g" sip.conf
-sed -i "s/asterisk_db_password/$KEYPASS_ASTERISK/g" res_mysql.conf
-sed -i "s/asterisk_db_password/$KEYPASS_ASTERISK/g" cdr_mysql.conf
+sed -i "s/asterisk_db_password/$KEYPASS/g" res_mysql.conf
+sed -i "s/asterisk_db_password/$KEYPASS/g" cdr_mysql.conf
 
 
 # muevo softphone
