@@ -48,7 +48,7 @@ html, body {
     float: left;
 }
 
-#answer, #hangUp, #reject, #connectCall, #mute {
+#answer, #hangUp, #reject, #connectCall, #mute #login {
     color: #FFF;
     background-color: #389400;
     width: 50px;
@@ -64,7 +64,7 @@ html, body {
     cursor: hand;
 }
 
-#mute:active, #connectCall:active, #reject:active, #hangUp:active, #answer:active {
+#mute:active, #connectCall:active, #reject:active, #hangUp:active, #login:active, #answer:active {
     background-color: #B6B6B6;
     -webkit-box-shadow: 0px 1px 7px 2px rgba(0, 0, 0, 0.45);
     -moz-box-shadow: 0px 1px 7px 2px rgba(0, 0, 0, 0.45);
@@ -90,7 +90,7 @@ html, body {
     margin-right: 10px;
 }
 
-#connectCall, #mute {
+#connectCall, #mute, #login {
     color: #FFF;
     background-color: #389400;
     width: 260px;
@@ -136,7 +136,7 @@ html, body {
     border-radius: 2px 2px 2px 2px;
     -moz-border-radius: 2px 2px 2px 2px;
     -webkit-border-radius: 2px 2px 2px 2px;
-    border: 0px solid #B8B8B8;
+    border: 1px solid #B8B8B8;
     color: #494949;
     background: transparent;
 }

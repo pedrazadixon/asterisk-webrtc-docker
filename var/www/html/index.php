@@ -1,4 +1,5 @@
-<?php if (!isset($_GET['user']) || !isset($_GET['pass']) || !isset($_GET['host'])) exit('user or pass or host no set') ?>
+<?php 
+if(empty($_GET['user']) || empty($_GET['pass']) || empty($_GET['host'])) header('Location: login.php'); ?>
 
 <!doctype html>
 <html lang="es">
