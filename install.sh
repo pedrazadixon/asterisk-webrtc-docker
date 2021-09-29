@@ -5,7 +5,7 @@ ROOTUSER="root"
 DIR_SCRITP="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 printf "\n"
-printf "Ingrese el hostname ej. octopus.vectoritcgroup.com\n"
+printf "Ingrese el hostname ej. example.com\n"
 printf "Si no existe ingrese la ip publica\n"
 printf "Si no existe ingrese la ip local\n"
 printf "[domain or ip]: "
