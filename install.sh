@@ -29,7 +29,7 @@ fi
 
 
 printf "\n"
-printf "ingrese nombre de la compania. ej. Vector ITC Group\n"
+printf "ingrese nombre de la compania. ej. UCC Colombia\n"
 printf "Si no existe ingrese la ip local\n"
 printf "[compania]: "
 read COMPANY
@@ -158,15 +158,20 @@ sed -i "s/^localnet=local_ip/localnet=$IP_MACHINE/g" sip.conf
 sed -i "s/asterisk_db_password/$KEYPASS_ASTERISK/g" res_mysql.conf
 sed -i "s/asterisk_db_password/$KEYPASS_ASTERISK/g" cdr_mysql.conf
 
+
+# muevo softphone
+cd $DIR_SCRITP
+cp -r var/www/html/* /var/www/html/
+
 # reinicio de servicios
 systemctl stop httpd
 systemctl start httpd
-systemctl status httpd
 
 systemctl stop mysql
 systemctl start mysql
-systemctl status mysql
 
 systemctl stop asterisk
 systemctl start asterisk
-systemctl status asterisk
+
+printf "\n"
+printf "Instalacion finalizada.\n"
